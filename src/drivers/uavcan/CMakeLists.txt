@@ -146,6 +146,8 @@ px4_add_module(
 	SRCS
 		arming_status.cpp
 		arming_status.hpp
+		battery_info.cpp
+		battery_info.hpp
 		beep.cpp
 		beep.hpp
 		remoteid.cpp

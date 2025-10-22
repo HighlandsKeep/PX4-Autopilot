@@ -244,6 +244,18 @@ PARAM_DEFINE_INT32(UAVCAN_PUB_ARM, 0);
 PARAM_DEFINE_INT32(UAVCAN_PUB_RTCM, 0);
 
 /**
+ * publish Battery Info stream
+ *
+ * Enable UAVCAN Battery Info stream publication
+ *  uavcan::equipment::power::BatteryInfo
+ *
+ * @boolean
+ * @reboot_required true
+ * @group UAVCAN
+ */
+PARAM_DEFINE_INT32(UAVCAN_PUB_BAT, 0);
+
+/**
  * publish moving baseline data RTCM stream
  *
  * Enable UAVCAN RTCM stream publication
