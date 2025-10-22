@@ -66,6 +66,10 @@
 #include "beep.hpp"
 #endif
 
+#if defined(CONFIG_UAVCAN_BATTERY_INFO)
+#include "battery_info.hpp"
+#endif
+
 #include "logmessage.hpp"
 
 #if defined(CONFIG_UAVCAN_REMOTEID_CONTROLLER)
@@ -282,6 +286,10 @@ private:
 #endif
 #if defined(CONFIG_UAVCAN_RGB_CONTROLLER)
 	UavcanRGBController             _rgbled_controller;
+#endif
+
+#if defined(CONFIG_UAVCAN_BATTERY_INFO)
+	UavcanBatteryInfo              _battery_info_controller;
 #endif
 
 	UavcanLogMessage                _log_message_controller;

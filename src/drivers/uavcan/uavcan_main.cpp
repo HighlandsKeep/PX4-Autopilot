@@ -102,6 +102,9 @@ UavcanNode::UavcanNode(uavcan::ICanDriver &can_driver, uavcan::ISystemClock &sys
 #if defined(CONFIG_UAVCAN_RGB_CONTROLLER)
 	_rgbled_controller(_node),
 #endif
+#if defined(CONFIG_UAVCAN_BATTERY_INFO)
+	_battery_info_controller(_node),
+#endif
 	_log_message_controller(_node),
 	_time_sync_master(_node),
 	_time_sync_slave(_node),
@@ -559,6 +562,19 @@ UavcanNode::init(uavcan::NodeID node_id, UAVCAN_DRIVER::BusEvent &bus_events)
 		return ret;
 	}
 
+#endif
+
+#if defined(CONFIG_UAVCAN_BATTERY_INFO)
+	int32_t uavcan_pub_battery = 0;
+	param_get(param_find("UAVCAN_PUB_BAT"), &uavcan_pub_battery);
+
+	if (uavcan_pub_battery == 1) {
+		ret = _battery_info_controller.init();
+
+		if (ret < 0) {
+			return ret;
+		}
+	}
 #endif
 
 	ret = _log_message_controller.init();
