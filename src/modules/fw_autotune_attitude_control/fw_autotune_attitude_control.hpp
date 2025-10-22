@@ -58,6 +58,7 @@
 #include <uORB/topics/parameter_update.h>
 #include <uORB/topics/autotune_attitude_control_status.h>
 #include <uORB/topics/vehicle_angular_velocity.h>
+#include <uORB/topics/vehicle_command.h>
 #include <uORB/topics/vehicle_status.h>
 #include <uORB/topics/vehicle_torque_setpoint.h>
 #include <mathlib/mathlib.h>
@@ -126,6 +127,7 @@ private:
 	uORB::Subscription _manual_control_setpoint_sub{ORB_ID(manual_control_setpoint)};
 	uORB::Subscription _vehicle_angular_velocity_sub{ORB_ID(vehicle_angular_velocity)};
 	uORB::Subscription _vehicle_status_sub{ORB_ID(vehicle_status)};
+	uORB::Subscription _vehicle_command_sub{ORB_ID(vehicle_command)};
 
 	uORB::PublicationData<autotune_attitude_control_status_s> _autotune_attitude_control_status_pub{ORB_ID(autotune_attitude_control_status)};
 
@@ -160,6 +162,7 @@ private:
 		complete
 	} _amplitude_detection_state{amplitudeDetectionState::init};
 
+
 	hrt_abstime _state_start_time{0};
 	uint8_t _steps_counter{0};
 	uint8_t _max_steps{5};
@@ -188,6 +191,8 @@ private:
 	uint8_t _nav_state{0};
 	uint8_t _start_flight_mode{0};
 	bool _aux_switch_en{false};
+	bool _vehicle_cmd_start_autotune{false};
+	bool _want_start_autotune{false};
 
 	orb_advert_t _mavlink_log_pub{nullptr};
 
