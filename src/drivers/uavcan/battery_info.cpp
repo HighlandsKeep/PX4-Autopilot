@@ -47,21 +47,13 @@ UavcanBatteryInfo::UavcanBatteryInfo(uavcan::INode &node) :
 
 int UavcanBatteryInfo::init()
 {
-	// Get parameter for enabling/disabling battery info
-	int32_t en_bat = 0;
-	param_get(param_find("UAVCAN_PUB_BAT"), &en_bat);
-	_param_en_bat = (en_bat == 1);
-
-	if (_param_en_bat) {
-		/*
-		* Setup timer and call back function for periodic updates
-		*/
-		if (!_timer.isRunning()) {
-			_timer.setCallback(TimerCbBinder(this, &UavcanBatteryInfo::periodic_update));
-			_timer.startPeriodic(uavcan::MonotonicDuration::fromMSec(1000 / MAX_RATE_HZ));
-		}
+	/*
+	* Setup timer and call back function for periodic updates
+	*/
+	if (!_timer.isRunning()) {
+		_timer.setCallback(TimerCbBinder(this, &UavcanBatteryInfo::periodic_update));
+		_timer.startPeriodic(uavcan::MonotonicDuration::fromMSec(1000 / MAX_RATE_HZ));
 	}
-
 	return 0;
 }
 

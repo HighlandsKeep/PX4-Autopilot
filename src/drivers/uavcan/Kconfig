@@ -94,6 +94,10 @@ if DRIVERS_UAVCAN
         bool "Subscribe to Safety Button:               ardupilot::indication::Button"
         default y
 
+    config UAVCAN_SENSOR_RC_INPUT
+        bool "Subscribe to RC Input:                    dronecan::sensors::rc::RCInput"
+	default y
+
 endif #DRIVERS_UAVCAN
 
 

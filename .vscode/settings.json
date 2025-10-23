@@ -129,4 +129,15 @@
         "yaml.schemas": {
                 "${workspaceFolder}/validation/module_schema.yaml": "${workspaceFolder}/src/modules/*/module.yaml"
         },
+        "python.autoComplete.extraPaths": [
+                "/opt/ros/iron/lib/python3.10/site-packages"
+        ],
+        "python.analysis.extraPaths": [
+                "/opt/ros/iron/lib/python3.10/site-packages"
+        ],
+        "ros.distro": "iron",
+        "editor.formatOnSave": true,
+        "[cpp]": {
+                "editor.defaultFormatter": "xaver.clang-format"
+        }
 }
