@@ -33,73 +33,97 @@
 
 #pragma once
 
-#include <uORB/topics/vehicle_status.h>
 #include "HealthAndArmingChecks/HealthAndArmingChecks.hpp"
+#include <uORB/topics/vehicle_status.h>
 
 enum class ModeChangeSource {
-	User,           ///< RC or MAVLink
-	ModeExecutor,
+  User, ///< RC or MAVLink
+  ModeExecutor,
 };
 
-class ModeChangeHandler
-{
+class ModeChangeHandler {
 public:
-	virtual void onUserIntendedNavStateChange(ModeChangeSource source, uint8_t user_intended_nav_state) = 0;
+  virtual void
+  onUserIntendedNavStateChange(ModeChangeSource source,
+                               uint8_t user_intended_nav_state) = 0;
 
-	/**
-	 * Get the replaced (internal) mode for a given (external) mode
-	 * @param nav_state
-	 * @return nav_state or the mode that nav_state replaces
-	 */
-	virtual uint8_t getReplacedModeIfAny(uint8_t nav_state) = 0;
+  /**
+   * Get the replaced (internal) mode for a given (external) mode
+   * @param nav_state
+   * @return nav_state or the mode that nav_state replaces
+   */
+  virtual uint8_t getReplacedModeIfAny(uint8_t nav_state) = 0;
 
-	virtual uint8_t onDisarm(uint8_t stored_nav_state) = 0;
+  virtual uint8_t onDisarm(uint8_t stored_nav_state) = 0;
 };
 
-
-class UserModeIntention
-{
+class UserModeIntention {
 public:
-	UserModeIntention(const vehicle_status_s &vehicle_status,
-			  const HealthAndArmingChecks &health_and_arming_checks, ModeChangeHandler *handler);
-	~UserModeIntention() = default;
+  UserModeIntention(const vehicle_status_s &vehicle_status,
+                    const HealthAndArmingChecks &health_and_arming_checks,
+                    ModeChangeHandler *handler,
+                    uint8_t initial_nav_state =
+                        vehicle_status_s::NAVIGATION_STATE_AUTO_LOITER);
+  ~UserModeIntention() = default;
 
-	/**
-	 * Change the user intended mode
-	 * @param user_intended_nav_state new mode
-	 * @param source calling reason
-	 * @param allow_fallback allow to fallback to a lower mode if current mode cannot run
-	 * @param force always set if true
-	 * @return true if successfully set (also if unchanged)
-	 */
-	bool change(uint8_t user_intended_nav_state, ModeChangeSource source = ModeChangeSource::User,
-		    bool allow_fallback = false, bool force = false);
+  /**
+   * Change the user intended mode
+   * @param user_intended_nav_state new mode
+   * @param source calling reason
+   * @param allow_fallback allow to fallback to a lower mode if current mode
+   * cannot run
+   * @param force always set if true
+   * @return true if successfully set (also if unchanged)
+   */
+  bool change(uint8_t user_intended_nav_state,
+              ModeChangeSource source = ModeChangeSource::User,
+              bool allow_fallback = false, bool force = false);
 
-	uint8_t get() const { return _user_intented_nav_state; }
+  uint8_t get() const { return _user_intented_nav_state; }
 
-	/**
-	 * Change the user intention to the last user intended mode where arming is possible
-	 */
-	void onDisarm();
+  /**
+   * Change the user intention to the last user intended mode where arming is
+   * possible
+   */
+  void onDisarm();
 
-	/**
-	 * Returns false if there has not been any mode change yet
-	 */
-	bool everHadModeChange() const { return _ever_had_mode_change; }
+  /**
+   * Returns false if there has not been any mode change yet
+   */
+  bool everHadModeChange() const { return _ever_had_mode_change; }
 
-	bool getHadModeChangeAndClear() { bool ret = _had_mode_change; _had_mode_change = false; return ret; }
+  bool getHadModeChangeAndClear() {
+    bool ret = _had_mode_change;
+    _had_mode_change = false;
+    return ret;
+  }
 
 private:
-	bool isArmed() const { return _vehicle_status.arming_state == vehicle_status_s::ARMING_STATE_ARMED; }
-	bool isTakeOffIntended(uint8_t user_intented_nav_state) const {return user_intented_nav_state == vehicle_status_s::NAVIGATION_STATE_AUTO_TAKEOFF || user_intented_nav_state == vehicle_status_s::NAVIGATION_STATE_AUTO_VTOL_TAKEOFF;}
+  bool isArmed() const {
+    return _vehicle_status.arming_state == vehicle_status_s::ARMING_STATE_ARMED;
+  }
+  bool isTakeOffIntended(uint8_t user_intented_nav_state) const {
+    return user_intented_nav_state ==
+               vehicle_status_s::NAVIGATION_STATE_AUTO_TAKEOFF ||
+           user_intented_nav_state ==
+               vehicle_status_s::NAVIGATION_STATE_AUTO_VTOL_TAKEOFF;
+  }
 
-	const vehicle_status_s &_vehicle_status;
-	const HealthAndArmingChecks &_health_and_arming_checks;
-	ModeChangeHandler *const _handler{nullptr};
+  const vehicle_status_s &_vehicle_status;
+  const HealthAndArmingChecks &_health_and_arming_checks;
+  ModeChangeHandler *const _handler{nullptr};
 
-	uint8_t _user_intented_nav_state{vehicle_status_s::NAVIGATION_STATE_AUTO_LOITER}; ///< Current user intended mode
-	uint8_t _nav_state_after_disarming{vehicle_status_s::NAVIGATION_STATE_AUTO_LOITER}; ///< Mode that is switched into after landing/disarming
+  uint8_t _user_intented_nav_state{
+      vehicle_status_s::NAVIGATION_STATE_AUTO_LOITER}; ///< Current user
+                                                       ///< intended mode
+  uint8_t _nav_state_after_disarming{
+      vehicle_status_s::NAVIGATION_STATE_AUTO_LOITER}; ///< Mode that is
+                                                       ///< switched into after
+                                                       ///< landing/disarming
 
-	bool _ever_had_mode_change{false}; ///< true if there was ever a mode change call (also if the same mode as already set)
-	bool _had_mode_change{false}; ///< true if there was a mode change call since the last getHadModeChangeAndClear()
+  bool _ever_had_mode_change{
+      false}; ///< true if there was ever a mode change call (also if the same
+              ///< mode as already set)
+  bool _had_mode_change{false}; ///< true if there was a mode change call since
+                                ///< the last getHadModeChangeAndClear()
 };

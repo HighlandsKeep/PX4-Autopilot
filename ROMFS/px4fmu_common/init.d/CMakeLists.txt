@@ -54,6 +54,20 @@ if(CONFIG_MODULES_AIRSHIP_ATT_CONTROL)
 	)
 endif()
 
+if(CONFIG_MODULES_BOAT_DIFFERENTIAL)
+	px4_add_romfs_files(
+		rc.boat_differential_apps
+		rc.boat_differential_defaults
+	)
+endif()
+
+if(CONFIG_MODULES_BOAT_VECTORTHRUST)
+	px4_add_romfs_files(
+		rc.boat_vectorthrust_apps
+		rc.boat_vectorthrust_defaults
+	)
+endif()
+
 if(CONFIG_MODULES_FW_RATE_CONTROL)
 	px4_add_romfs_files(
 		rc.fw_apps

@@ -37,101 +37,90 @@
 
 #include <stdint.h>
 
-namespace mode_util
-{
+namespace mode_util {
 
 /**
  * @return Bitmask with all valid modes
  */
-static inline uint32_t getValidNavStates()
-{
-	return (1u << vehicle_status_s::NAVIGATION_STATE_MANUAL) |
-	       (1u << vehicle_status_s::NAVIGATION_STATE_ALTCTL) |
-	       (1u << vehicle_status_s::NAVIGATION_STATE_ALTITUDE_CRUISE) |
-	       (1u << vehicle_status_s::NAVIGATION_STATE_POSCTL) |
-	       (1u << vehicle_status_s::NAVIGATION_STATE_AUTO_MISSION) |
-	       (1u << vehicle_status_s::NAVIGATION_STATE_AUTO_LOITER) |
-	       (1u << vehicle_status_s::NAVIGATION_STATE_AUTO_RTL) |
-	       (1u << vehicle_status_s::NAVIGATION_STATE_POSITION_SLOW) |
-	       (1u << vehicle_status_s::NAVIGATION_STATE_ACRO) |
-	       (1u << vehicle_status_s::NAVIGATION_STATE_TERMINATION) |
-	       (1u << vehicle_status_s::NAVIGATION_STATE_OFFBOARD) |
-	       (1u << vehicle_status_s::NAVIGATION_STATE_STAB) |
-	       (1u << vehicle_status_s::NAVIGATION_STATE_AUTO_TAKEOFF) |
-	       (1u << vehicle_status_s::NAVIGATION_STATE_AUTO_LAND) |
-	       (1u << vehicle_status_s::NAVIGATION_STATE_AUTO_FOLLOW_TARGET) |
-	       (1u << vehicle_status_s::NAVIGATION_STATE_AUTO_PRECLAND) |
-	       (1u << vehicle_status_s::NAVIGATION_STATE_ORBIT) |
-	       (1u << vehicle_status_s::NAVIGATION_STATE_AUTO_VTOL_TAKEOFF);
+static inline uint32_t getValidNavStates() {
+  return (1u << vehicle_status_s::NAVIGATION_STATE_MANUAL) |
+         (1u << vehicle_status_s::NAVIGATION_STATE_ALTCTL) |
+         (1u << vehicle_status_s::NAVIGATION_STATE_ALTITUDE_CRUISE) |
+         (1u << vehicle_status_s::NAVIGATION_STATE_POSCTL) |
+         (1u << vehicle_status_s::NAVIGATION_STATE_AUTO_MISSION) |
+         (1u << vehicle_status_s::NAVIGATION_STATE_AUTO_LOITER) |
+         (1u << vehicle_status_s::NAVIGATION_STATE_AUTO_RTL) |
+         (1u << vehicle_status_s::NAVIGATION_STATE_POSITION_SLOW) |
+         (1u << vehicle_status_s::NAVIGATION_STATE_ACRO) |
+         (1u << vehicle_status_s::NAVIGATION_STATE_TERMINATION) |
+         (1u << vehicle_status_s::NAVIGATION_STATE_OFFBOARD) |
+         (1u << vehicle_status_s::NAVIGATION_STATE_STAB) |
+         (1u << vehicle_status_s::NAVIGATION_STATE_SAFE) |
+         (1u << vehicle_status_s::NAVIGATION_STATE_AUTO_TAKEOFF) |
+         (1u << vehicle_status_s::NAVIGATION_STATE_AUTO_LAND) |
+         (1u << vehicle_status_s::NAVIGATION_STATE_AUTO_FOLLOW_TARGET) |
+         (1u << vehicle_status_s::NAVIGATION_STATE_AUTO_PRECLAND) |
+         (1u << vehicle_status_s::NAVIGATION_STATE_ORBIT) |
+         (1u << vehicle_status_s::NAVIGATION_STATE_AUTO_VTOL_TAKEOFF);
 
-	static_assert(vehicle_status_s::NAVIGATION_STATE_MAX  == 31, "update valid nav states");
+  static_assert(vehicle_status_s::NAVIGATION_STATE_MAX == 31,
+                "update valid nav states");
 }
 
 const char *const nav_state_names[vehicle_status_s::NAVIGATION_STATE_MAX] = {
-	"Manual",
-	"Altitude",
-	"Position",
-	"Mission",
-	"Hold",
-	"Return",
-	"Position Slow",
-	"7: unallocated",
-	"Altitude Cruise",
-	"9: unallocated",
-	"Acro",
-	"11: UNUSED",
-	"Descend",
-	"Termination",
-	"Offboard",
-	"Stabilized",
-	"16: UNUSED2",
-	"Takeoff",
-	"Land",
-	"Follow Target",
-	"Precision Landing",
-	"Orbit",
-	"VTOL Takeoff",
-	"External 1",
-	"External 2",
-	"External 3",
-	"External 4",
-	"External 5",
-	"External 6",
-	"External 7",
-	"External 8",
+    "Manual",         "Altitude",       "Position",
+    "Mission",        "Hold",           "Return",
+    "Position Slow",  "7: unallocated", "Altitude Cruise",
+    "9: unallocated", "Acro",           "11: UNUSED",
+    "Descend",        "Termination",    "Offboard",
+    "Stabilized",     "Safe",           "Takeoff",
+    "Land",           "Follow Target",  "Precision Landing",
+    "Orbit",          "VTOL Takeoff",   "External 1",
+    "External 2",     "External 3",     "External 4",
+    "External 5",     "External 6",     "External 7",
+    "External 8",
 };
 
 /**
  * @return returns true for advanced modes
  */
-static inline bool isAdvanced(uint8_t nav_state)
-{
-	switch (nav_state) {
-	case vehicle_status_s::NAVIGATION_STATE_ALTCTL: return false;
+static inline bool isAdvanced(uint8_t nav_state) {
+  switch (nav_state) {
+  case vehicle_status_s::NAVIGATION_STATE_ALTCTL:
+    return false;
 
-	case vehicle_status_s::NAVIGATION_STATE_ALTITUDE_CRUISE: return false;
+  case vehicle_status_s::NAVIGATION_STATE_ALTITUDE_CRUISE:
+    return false;
 
-	case vehicle_status_s::NAVIGATION_STATE_POSCTL: return false;
+  case vehicle_status_s::NAVIGATION_STATE_POSCTL:
+    return false;
 
-	case vehicle_status_s::NAVIGATION_STATE_EXTERNAL1: return false;
+  case vehicle_status_s::NAVIGATION_STATE_EXTERNAL1:
+    return false;
 
-	case vehicle_status_s::NAVIGATION_STATE_EXTERNAL2: return false;
+  case vehicle_status_s::NAVIGATION_STATE_EXTERNAL2:
+    return false;
 
-	case vehicle_status_s::NAVIGATION_STATE_EXTERNAL3: return false;
+  case vehicle_status_s::NAVIGATION_STATE_EXTERNAL3:
+    return false;
 
-	case vehicle_status_s::NAVIGATION_STATE_EXTERNAL4: return false;
+  case vehicle_status_s::NAVIGATION_STATE_EXTERNAL4:
+    return false;
 
-	case vehicle_status_s::NAVIGATION_STATE_EXTERNAL5: return false;
+  case vehicle_status_s::NAVIGATION_STATE_EXTERNAL5:
+    return false;
 
-	case vehicle_status_s::NAVIGATION_STATE_EXTERNAL6: return false;
+  case vehicle_status_s::NAVIGATION_STATE_EXTERNAL6:
+    return false;
 
-	case vehicle_status_s::NAVIGATION_STATE_EXTERNAL7: return false;
+  case vehicle_status_s::NAVIGATION_STATE_EXTERNAL7:
+    return false;
 
-	case vehicle_status_s::NAVIGATION_STATE_EXTERNAL8: return false;
+  case vehicle_status_s::NAVIGATION_STATE_EXTERNAL8:
+    return false;
+  }
 
-	}
-
-	return true;
+  return true;
 }
 
 } // namespace mode_util

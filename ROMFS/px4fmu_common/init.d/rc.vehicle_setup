@@ -42,6 +42,24 @@ then
 fi
 
 #
+# Differential Boat setup.
+#
+if [ $VEHICLE_TYPE = boat_differential ]
+then
+	# Start differential drive boat apps.
+	. ${R}etc/init.d/rc.boat_differential_apps
+fi
+
+#
+# Vector Thrust Boat setup.
+#
+if [ $VEHICLE_TYPE = boat_vectorthrust ]
+then
+	# Start vector thrust boat apps.
+	. ${R}etc/init.d/rc.boat_vectorthrust_apps
+fi
+
+#
 # Ackermann Rover setup.
 #
 if [ $VEHICLE_TYPE = rover_ackermann ]
