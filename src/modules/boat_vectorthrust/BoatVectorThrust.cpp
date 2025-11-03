@@ -99,9 +99,12 @@ void BoatVectorThrust::generateSetpoints() {
 
   switch (vehicle_status.nav_state) {
   case vehicle_status_s::NAVIGATION_STATE_AUTO_MISSION:
-  case vehicle_status_s::NAVIGATION_STATE_AUTO_LOITER:
   case vehicle_status_s::NAVIGATION_STATE_AUTO_RTL:
     _auto_mode.autoControl();
+    break;
+
+  case vehicle_status_s::NAVIGATION_STATE_AUTO_LOITER:
+    _loiter_mode.loiterControl();
     break;
 
   case vehicle_status_s::NAVIGATION_STATE_OFFBOARD:

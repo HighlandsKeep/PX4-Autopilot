@@ -51,12 +51,14 @@ px4_add_module(
 		BoatSpeedControl
 		BoatPosControl
 		BoatAutoMode
+		BoatLoiterMode
 		BoatManualMode
 		BoatOffboardMode
 		safe_mode
 		px4_work_queue
 		rover_control
 		pure_pursuit
+		boat_loiter
 	MODULE_CONFIG
 		module.yaml
 )

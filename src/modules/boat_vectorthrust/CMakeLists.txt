@@ -51,12 +51,14 @@ px4_add_module(
 		VectorThrustSpeedControl
 		VectorThrustPosControl
 		VectorThrustAutoMode
+		VectorThrustLoiterMode
 		VectorThrustManualMode
 		VectorThrustOffboardMode
 		safe_mode
 		px4_work_queue
 		rover_control
 		pure_pursuit
+		boat_loiter
 	MODULE_CONFIG
 		module.yaml
 )

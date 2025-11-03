@@ -187,7 +187,7 @@ PARAM_DEFINE_FLOAT(RO_YAW_RATE_CORR, 1.f);
  * @decimal 3
  * @group Rover Attitude Control
  */
-PARAM_DEFINE_FLOAT(RO_YAW_P, 0.f);
+PARAM_DEFINE_FLOAT(RO_YAW_P, 1.0f);
 
 /**
  * Speed the rover drives at maximum throttle

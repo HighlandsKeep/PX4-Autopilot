@@ -32,5 +32,6 @@
 ############################################################################
 
 add_subdirectory(VectorThrustAutoMode)
+add_subdirectory(VectorThrustLoiterMode)
 add_subdirectory(VectorThrustManualMode)
 add_subdirectory(VectorThrustOffboardMode)

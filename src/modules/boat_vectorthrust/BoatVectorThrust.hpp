@@ -54,6 +54,7 @@
 #include "VectorThrustActControl/VectorThrustActControl.hpp"
 #include "VectorThrustAttControl/VectorThrustAttControl.hpp"
 #include "VectorThrustDriveModes/VectorThrustAutoMode/VectorThrustAutoMode.hpp"
+#include "VectorThrustDriveModes/VectorThrustLoiterMode/VectorThrustLoiterMode.hpp"
 #include "VectorThrustDriveModes/VectorThrustManualMode/VectorThrustManualMode.hpp"
 #include "VectorThrustDriveModes/VectorThrustOffboardMode/VectorThrustOffboardMode.hpp"
 #include "VectorThrustPosControl/VectorThrustPosControl.hpp"
@@ -128,6 +129,7 @@ private:
   VectorThrustSpeedControl _ackermann_speed_control{this};
   VectorThrustPosControl _ackermann_pos_control{this};
   VectorThrustAutoMode _auto_mode{this};
+  VectorThrustLoiterMode _loiter_mode{this};
   VectorThrustManualMode _manual_mode{this};
   VectorThrustOffboardMode _offboard_mode{this};
   SafeMode _safe_mode{this};
