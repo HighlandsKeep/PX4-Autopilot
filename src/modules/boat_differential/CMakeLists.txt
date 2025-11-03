@@ -1,6 +1,6 @@
 ############################################################################
 #
-#   Copyright (c) 2025 PX4 DeSpeedopment Team. All rights reserved.
+#   Copyright (c) 2025 PX4 Development Team. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions
@@ -51,12 +51,14 @@ px4_add_module(
 		BoatSpeedControl
 		BoatPosControl
 		BoatAutoMode
+		BoatLoiterMode
 		BoatManualMode
 		BoatOffboardMode
 		safe_mode
 		px4_work_queue
 		rover_control
 		pure_pursuit
+		boat_loiter
 	MODULE_CONFIG
 		module.yaml
 )

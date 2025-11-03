@@ -40,62 +40,76 @@
 #include <lib/rover_control/RoverControl.hpp>
 #include <math.h>
 
+// Drive modes
+#include "../BoatLoiterMode/BoatLoiterMode.hpp"
+
 // uORB includes
-#include <uORB/Subscription.hpp>
 #include <uORB/Publication.hpp>
-#include <uORB/topics/vehicle_local_position.h>
+#include <uORB/Subscription.hpp>
 #include <uORB/topics/position_setpoint_triplet.h>
 #include <uORB/topics/rover_position_setpoint.h>
+#include <uORB/topics/vehicle_local_position.h>
 
 /**
  * @brief Class for differential auto mode.
  */
-class BoatAutoMode : public ModuleParams
-{
+class BoatAutoMode : public ModuleParams {
 public:
-	/**
-	 * @brief Constructor for auto mode.
-	 * @param parent The parent ModuleParams object.
-	 */
-	BoatAutoMode(ModuleParams *parent);
-	~BoatAutoMode() = default;
+  /**
+   * @brief Constructor for auto mode.
+   * @param parent The parent ModuleParams object.
+   */
+  BoatAutoMode(ModuleParams *parent);
+  ~BoatAutoMode() = default;
 
-	/**
-	 * @brief Generate and publish roverPositionSetpoint from positionSetpointTriplet.
-	 */
-	void autoControl();
+  /**
+   * @brief Generate and publish roverPositionSetpoint from
+   * positionSetpointTriplet.
+   */
+  void autoControl();
 
 protected:
-	/**
-	 * @brief Update the parameters of the module.
-	 */
-	void updateParams() override;
+  /**
+   * @brief Update the parameters of the module.
+   */
+  void updateParams() override;
 
 private:
-	/**
-	 * @brief Calculate the speed at which the rover should arrive at the current waypoint. During waypoint transition the speed is restricted to
-	 * Maximum_speed * (1 - normalized_transition_angle * RM_MISS_VEL_GAIN).
-	 * @param cruising_speed Cruising speed [m/s].
-	 * @param waypoint_transition_angle Angle between the prevWP-currWP and currWP-nextWP line segments [rad]
-	 * @param max_speed Maximum speed setpoint [m/s]
-	 * @param trans_drv_trn Heading error threshold to switch from driving to turning [rad].
-	 * @param speed_red Tuning parameter for the speed reduction during waypoint transition.
-	 * @param curr_wp_type Type of the current waypoint.
-	 * @return Speed setpoint [m/s].
-	 */
-	float arrivalSpeed(const float cruising_speed, const float waypoint_transition_angle, const float max_speed,
-			   const float trans_drv_trn, const float speed_red, int curr_wp_type);
+  /**
+   * @brief Calculate the speed at which the rover should arrive at the current
+   * waypoint. During waypoint transition the speed is restricted to
+   * Maximum_speed * (1 - normalized_transition_angle * RM_MISS_VEL_GAIN).
+   * @param cruising_speed Cruising speed [m/s].
+   * @param waypoint_transition_angle Angle between the prevWP-currWP and
+   * currWP-nextWP line segments [rad]
+   * @param max_speed Maximum speed setpoint [m/s]
+   * @param trans_drv_trn Heading error threshold to switch from driving to
+   * turning [rad].
+   * @param speed_red Tuning parameter for the speed reduction during waypoint
+   * transition.
+   * @param curr_wp_type Type of the current waypoint.
+   * @return Speed setpoint [m/s].
+   */
+  float arrivalSpeed(const float cruising_speed,
+                     const float waypoint_transition_angle,
+                     const float max_speed, const float trans_drv_trn,
+                     const float speed_red, int curr_wp_type);
 
-	// uORB subscriptions
-	uORB::Subscription _vehicle_local_position_sub{ORB_ID(vehicle_local_position)};
-	uORB::Subscription _position_setpoint_triplet_sub{ORB_ID(position_setpoint_triplet)};
+  // uORB subscriptions
+  uORB::Subscription _vehicle_local_position_sub{
+      ORB_ID(vehicle_local_position)};
+  uORB::Subscription _position_setpoint_triplet_sub{
+      ORB_ID(position_setpoint_triplet)};
 
-	// uORB publications
-	uORB::Publication<rover_position_setpoint_s>    _rover_position_setpoint_pub{ORB_ID(rover_position_setpoint)};
+  // uORB publications
+  uORB::Publication<rover_position_setpoint_s> _rover_position_setpoint_pub{
+      ORB_ID(rover_position_setpoint)};
 
-	DEFINE_PARAMETERS(
-		(ParamFloat<px4::params::RO_SPEED_LIM>)     _param_ro_speed_limit,
-		(ParamFloat<px4::params::RO_SPEED_RED>)     _param_ro_speed_red,
-		(ParamFloat<px4::params::BD_TRANS_DRV_TRN>) _param_bd_trans_drv_trn
-	)
+  // Loiter mode instance for mission end behavior
+  BoatLoiterMode _loiter_mode;
+
+  DEFINE_PARAMETERS(
+      (ParamFloat<px4::params::RO_SPEED_LIM>)_param_ro_speed_limit,
+      (ParamFloat<px4::params::RO_SPEED_RED>)_param_ro_speed_red,
+      (ParamFloat<px4::params::BD_TRANS_DRV_TRN>)_param_bd_trans_drv_trn)
 };

@@ -233,11 +233,13 @@ bool ControlAllocator::update_effectiveness_source() {
       break;
 
     case EffectivenessSource::BOAT_DIFFERENTIAL:
-      // boat_differential module does allocation and publishes directly to actuator_motors topic
+      // boat_differential_control does allocation and publishes directly to
+      // actuator_motors topic
       break;
 
     case EffectivenessSource::BOAT_VECTORTHRUST:
-      // boat_vectorthrust module does allocation and publishes directly to actuator_motors topic
+      // boat_vectorthrust_control does allocation and publishes directly to
+      // actuator_motors topic
       break;
 
     case EffectivenessSource::FIXED_WING:

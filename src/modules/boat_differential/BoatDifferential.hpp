@@ -53,6 +53,7 @@
 #include "BoatActControl/BoatActControl.hpp"
 #include "BoatAttControl/BoatAttControl.hpp"
 #include "BoatDriveModes/BoatAutoMode/BoatAutoMode.hpp"
+#include "BoatDriveModes/BoatLoiterMode/BoatLoiterMode.hpp"
 #include "BoatDriveModes/BoatManualMode/BoatManualMode.hpp"
 #include "BoatDriveModes/BoatOffboardMode/BoatOffboardMode.hpp"
 #include "BoatPosControl/BoatPosControl.hpp"
@@ -127,6 +128,7 @@ private:
   BoatSpeedControl _differential_speed_control{this};
   BoatPosControl _differential_pos_control{this};
   BoatAutoMode _auto_mode{this};
+  BoatLoiterMode _loiter_mode{this};
   BoatManualMode _manual_mode{this};
   BoatOffboardMode _offboard_mode{this};
   SafeMode _safe_mode{this};

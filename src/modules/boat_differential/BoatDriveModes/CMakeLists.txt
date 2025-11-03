@@ -32,5 +32,6 @@
 ############################################################################
 
 add_subdirectory(BoatAutoMode)
+add_subdirectory(BoatLoiterMode)
 add_subdirectory(BoatManualMode)
 add_subdirectory(BoatOffboardMode)

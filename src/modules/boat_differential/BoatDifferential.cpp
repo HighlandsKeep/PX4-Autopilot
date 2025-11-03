@@ -35,212 +35,209 @@
 
 using namespace time_literals;
 
-BoatDifferential::BoatDifferential() :
-	ModuleParams(nullptr),
-	ScheduledWorkItem(MODULE_NAME, px4::wq_configurations::rate_ctrl)
-{
-	updateParams();
+BoatDifferential::BoatDifferential()
+    : ModuleParams(nullptr),
+      ScheduledWorkItem(MODULE_NAME, px4::wq_configurations::rate_ctrl) {
+  updateParams();
 }
 
-bool BoatDifferential::init()
-{
-	ScheduleOnInterval(10_ms); // 100 Hz
-	return true;
+bool BoatDifferential::init() {
+  ScheduleOnInterval(10_ms); // 100 Hz
+  return true;
 }
 
-void BoatDifferential::updateParams()
-{
-	ModuleParams::updateParams();
+void BoatDifferential::updateParams() { ModuleParams::updateParams(); }
+
+void BoatDifferential::Run() {
+  if (_parameter_update_sub.updated()) {
+    parameter_update_s param_update{};
+    _parameter_update_sub.copy(&param_update);
+    updateParams();
+    runSanityChecks();
+  }
+
+  if (_vehicle_control_mode_sub.updated()) {
+    vehicle_control_mode_s vehicle_control_mode{};
+    _vehicle_control_mode_sub.copy(&vehicle_control_mode);
+
+    // Run sanity checks if the control mode changes (Note: This has to be done
+    // this way, because the topic is periodically updated at 2 Hz)
+    if (_vehicle_control_mode.flag_control_position_enabled !=
+            vehicle_control_mode.flag_control_position_enabled ||
+        _vehicle_control_mode.flag_control_velocity_enabled !=
+            vehicle_control_mode.flag_control_velocity_enabled ||
+        _vehicle_control_mode.flag_control_attitude_enabled !=
+            vehicle_control_mode.flag_control_attitude_enabled ||
+        _vehicle_control_mode.flag_control_rates_enabled !=
+            vehicle_control_mode.flag_control_rates_enabled ||
+        _vehicle_control_mode.flag_control_allocation_enabled !=
+            vehicle_control_mode.flag_control_allocation_enabled) {
+      _vehicle_control_mode = vehicle_control_mode;
+      runSanityChecks();
+      reset();
+
+    } else {
+      _vehicle_control_mode = vehicle_control_mode;
+    }
+  }
+
+  if (_vehicle_control_mode.flag_armed && _sanity_checks_passed) {
+
+    _was_armed = true;
+    generateSetpoints();
+    updateControllers();
+
+  } else if (_was_armed) { // Reset all controllers and stop the vehicle
+    reset();
+    _differential_act_control.stopVehicle();
+    _was_armed = false;
+  }
 }
 
-void BoatDifferential::Run()
-{
-	if (_parameter_update_sub.updated()) {
-		parameter_update_s param_update{};
-		_parameter_update_sub.copy(&param_update);
-		updateParams();
-		runSanityChecks();
-	}
+void BoatDifferential::generateSetpoints() {
+  vehicle_status_s vehicle_status{};
+  _vehicle_status_sub.copy(&vehicle_status);
 
-	if (_vehicle_control_mode_sub.updated()) {
-		vehicle_control_mode_s vehicle_control_mode{};
-		_vehicle_control_mode_sub.copy(&vehicle_control_mode);
+  switch (vehicle_status.nav_state) {
+  case vehicle_status_s::NAVIGATION_STATE_AUTO_MISSION:
+  case vehicle_status_s::NAVIGATION_STATE_AUTO_RTL:
+    _auto_mode.autoControl();
+    break;
 
-		// Run sanity checks if the control mode changes (Note: This has to be done this way, because the topic is periodically updated at 2 Hz)
-		if (_vehicle_control_mode.flag_control_position_enabled != vehicle_control_mode.flag_control_position_enabled ||
-		    _vehicle_control_mode.flag_control_velocity_enabled != vehicle_control_mode.flag_control_velocity_enabled ||
-		    _vehicle_control_mode.flag_control_attitude_enabled != vehicle_control_mode.flag_control_attitude_enabled ||
-		    _vehicle_control_mode.flag_control_rates_enabled != vehicle_control_mode.flag_control_rates_enabled ||
-		    _vehicle_control_mode.flag_control_allocation_enabled != vehicle_control_mode.flag_control_allocation_enabled) {
-			_vehicle_control_mode = vehicle_control_mode;
-			runSanityChecks();
-			reset();
+  case vehicle_status_s::NAVIGATION_STATE_AUTO_LOITER:
+    _loiter_mode.loiterControl();
+    break;
 
-		} else {
-			_vehicle_control_mode = vehicle_control_mode;
-		}
-	}
+  case vehicle_status_s::NAVIGATION_STATE_OFFBOARD:
+    _offboard_mode.offboardControl();
+    break;
 
-	if (_vehicle_control_mode.flag_armed && _sanity_checks_passed) {
+  case vehicle_status_s::NAVIGATION_STATE_MANUAL:
+    _manual_mode.manual();
+    break;
 
-		_was_armed = true;
-		generateSetpoints();
-		updateControllers();
+  case vehicle_status_s::NAVIGATION_STATE_ACRO:
+    _manual_mode.acro();
+    break;
 
-	} else if (_was_armed) { // Reset all controllers and stop the vehicle
-		reset();
-		_differential_act_control.stopVehicle();
-		_was_armed = false;
-	}
+  case vehicle_status_s::NAVIGATION_STATE_STAB:
+    _manual_mode.stab();
+    break;
 
+  case vehicle_status_s::NAVIGATION_STATE_POSCTL:
+    _manual_mode.position();
+    break;
+
+  case vehicle_status_s::NAVIGATION_STATE_SAFE:
+    _safe_mode.safe();
+    break;
+
+  default:
+    break;
+  }
 }
 
-void BoatDifferential::generateSetpoints()
-{
-	vehicle_status_s vehicle_status{};
-	_vehicle_status_sub.copy(&vehicle_status);
+void BoatDifferential::updateControllers() {
+  if (_vehicle_control_mode.flag_control_position_enabled) {
+    _differential_pos_control.updatePosControl();
+  }
 
-	switch (vehicle_status.nav_state) {
-	case vehicle_status_s::NAVIGATION_STATE_AUTO_MISSION:
-	case vehicle_status_s::NAVIGATION_STATE_AUTO_LOITER:
-	case vehicle_status_s::NAVIGATION_STATE_AUTO_RTL:
-		_auto_mode.autoControl();
-		break;
+  if (_vehicle_control_mode.flag_control_attitude_enabled) {
+    _differential_att_control.updateAttControl();
+  }
 
-	case vehicle_status_s::NAVIGATION_STATE_OFFBOARD:
-		_offboard_mode.offboardControl();
-		break;
+  if (_vehicle_control_mode.flag_control_rates_enabled) {
+    _differential_rate_control.updateRateControl();
+  }
 
-	case vehicle_status_s::NAVIGATION_STATE_MANUAL:
-		_manual_mode.manual();
-		break;
+  if (_vehicle_control_mode.flag_control_velocity_enabled) {
+    _differential_speed_control.updateSpeedControl();
+  }
 
-	case vehicle_status_s::NAVIGATION_STATE_ACRO:
-		_manual_mode.acro();
-		break;
-
-	case vehicle_status_s::NAVIGATION_STATE_STAB:
-		_manual_mode.stab();
-		break;
-
-	case vehicle_status_s::NAVIGATION_STATE_POSCTL:
-		_manual_mode.position();
-		break;
-
-	case vehicle_status_s::NAVIGATION_STATE_SAFE:
-		_safe_mode.safe();
-		break;
-
-	default:
-		break;
-	}
-
+  if (_vehicle_control_mode.flag_control_allocation_enabled) {
+    _differential_act_control.updateActControl();
+  }
 }
 
-void BoatDifferential::updateControllers()
-{
-	if (_vehicle_control_mode.flag_control_position_enabled) {
-		_differential_pos_control.updatePosControl();
-	}
+void BoatDifferential::runSanityChecks() {
+  if (_vehicle_control_mode.flag_control_rates_enabled &&
+      !_differential_rate_control.runSanityChecks()) {
+    _sanity_checks_passed = false;
+    return;
+  }
 
-	if (_vehicle_control_mode.flag_control_attitude_enabled) {
-		_differential_att_control.updateAttControl();
-	}
+  if (_vehicle_control_mode.flag_control_attitude_enabled &&
+      !_differential_att_control.runSanityChecks()) {
+    _sanity_checks_passed = false;
+    return;
+  }
 
-	if (_vehicle_control_mode.flag_control_rates_enabled) {
-		_differential_rate_control.updateRateControl();
-	}
+  if (_vehicle_control_mode.flag_control_velocity_enabled &&
+      !_differential_speed_control.runSanityChecks()) {
+    _sanity_checks_passed = false;
+    return;
+  }
 
-	if (_vehicle_control_mode.flag_control_velocity_enabled) {
-		_differential_speed_control.updateSpeedControl();
-	}
+  if (_vehicle_control_mode.flag_control_position_enabled &&
+      !_differential_pos_control.runSanityChecks()) {
+    _sanity_checks_passed = false;
+    return;
+  }
 
-	if (_vehicle_control_mode.flag_control_allocation_enabled) {
-		_differential_act_control.updateActControl();
-	}
+  _sanity_checks_passed = true;
 }
 
-void BoatDifferential::runSanityChecks()
-{
-	if (_vehicle_control_mode.flag_control_rates_enabled && !_differential_rate_control.runSanityChecks()) {
-		_sanity_checks_passed = false;
-		return;
-	}
-
-	if (_vehicle_control_mode.flag_control_attitude_enabled && !_differential_att_control.runSanityChecks()) {
-		_sanity_checks_passed = false;
-		return;
-	}
-
-	if (_vehicle_control_mode.flag_control_velocity_enabled && !_differential_speed_control.runSanityChecks()) {
-		_sanity_checks_passed = false;
-		return;
-	}
-
-	if (_vehicle_control_mode.flag_control_position_enabled && !_differential_pos_control.runSanityChecks()) {
-		_sanity_checks_passed = false;
-		return;
-	}
-
-	_sanity_checks_passed = true;
+void BoatDifferential::reset() {
+  _differential_pos_control.reset();
+  _differential_speed_control.reset();
+  _differential_att_control.reset();
+  _differential_rate_control.reset();
+  _manual_mode.reset();
 }
 
-void BoatDifferential::reset()
-{
-	_differential_pos_control.reset();
-	_differential_speed_control.reset();
-	_differential_att_control.reset();
-	_differential_rate_control.reset();
-	_manual_mode.reset();
+int BoatDifferential::task_spawn(int argc, char *argv[]) {
+  BoatDifferential *instance = new BoatDifferential();
+
+  if (instance) {
+    _object.store(instance);
+    _task_id = task_id_is_work_queue;
+
+    if (instance->init()) {
+      return PX4_OK;
+    }
+
+  } else {
+    PX4_ERR("alloc failed");
+  }
+
+  delete instance;
+  _object.store(nullptr);
+  _task_id = -1;
+
+  return PX4_ERROR;
 }
 
-int BoatDifferential::task_spawn(int argc, char *argv[])
-{
-	BoatDifferential *instance = new BoatDifferential();
-
-	if (instance) {
-		_object.store(instance);
-		_task_id = task_id_is_work_queue;
-
-		if (instance->init()) {
-			return PX4_OK;
-		}
-
-	} else {
-		PX4_ERR("alloc failed");
-	}
-
-	delete instance;
-	_object.store(nullptr);
-	_task_id = -1;
-
-	return PX4_ERROR;
+int BoatDifferential::custom_command(int argc, char *argv[]) {
+  return print_usage("unknown command");
 }
 
-int BoatDifferential::custom_command(int argc, char *argv[])
-{
-	return print_usage("unknown command");
-}
+int BoatDifferential::print_usage(const char *reason) {
+  if (reason) {
+    PX4_ERR("%s\n", reason);
+  }
 
-int BoatDifferential::print_usage(const char *reason)
-{
-	if (reason) {
-		PX4_ERR("%s\n", reason);
-	}
-
-	PRINT_MODULE_DESCRIPTION(
-		R"DESCR_STR(
+  PRINT_MODULE_DESCRIPTION(
+      R"DESCR_STR(
 ### Description
 Rover differential module.
 )DESCR_STR");
 
-	PRINT_MODULE_USAGE_NAME("boat_differential", "controller");
-	PRINT_MODULE_USAGE_COMMAND("start");
-	PRINT_MODULE_USAGE_DEFAULT_COMMANDS();
-	return 0;
+  PRINT_MODULE_USAGE_NAME("boat_differential", "controller");
+  PRINT_MODULE_USAGE_COMMAND("start");
+  PRINT_MODULE_USAGE_DEFAULT_COMMANDS();
+  return 0;
 }
 
-extern "C" __EXPORT int boat_differential_main(int argc, char *argv[])
-{
-	return BoatDifferential::main(argc, argv);
+extern "C" __EXPORT int boat_differential_main(int argc, char *argv[]) {
+  return BoatDifferential::main(argc, argv);
 }
