@@ -33,6 +33,8 @@ parameters:
                 13: Rover (Mecanum)
                 14: Spacecraft 2D
                 15: Spacecraft 3D
+                16: Boat (Differential)
+                17: Boat (Vector Thrust)
             default: 0
 
         CA_METHOD:
@@ -1226,6 +1228,16 @@ mixer:
                             function: 'axisz'
                           - name: 'CA_ROTOR${i}_CT'
                             label: "Thrust\nCoefficient"
+
+            16: # Boat (Differential)
+                title: 'Boat (Differential)'
+                actuators:
+                  - actuator_type: 'motor'
+                    instances:
+                      - name: 'Right Motor'
+                        position: [ 0, 1, 0 ]
+                      - name: 'Left Motor'
+                        position: [ 0, -1, 0 ]
 
             15: # Spacecraft 3D
                 actuators:

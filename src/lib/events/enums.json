@@ -585,6 +585,10 @@
                             "description": "External 8"
                         },
                         "24": {
+                            "name": "safe",
+                            "description": "Safe"
+                        },
+                        "25": {
                             "name": "altitude_cruise",
                             "description": "Altitude Cruise"
                         },

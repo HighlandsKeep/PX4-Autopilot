@@ -1,0 +1,30 @@
+#!/bin/sh
+#
+# USV with differential steering
+#
+# NOTE: Script variables are declared/initialized/unset in the rcS script.
+#
+
+set VEHICLE_TYPE boat_differential
+
+# MAV_TYPE_SURFACE_BOAT 11
+param set-default MAV_TYPE 11
+
+#
+# Default parameters for USVs.
+#
+param set-default MIS_TAKEOFF_ALT 0.01
+param set-default NAV_ACC_RAD 2
+param set-default CA_AIRFRAME 16        # Boat (Differential)
+param set-default CA_R_REV 3            # Right and left motors reversible
+param set-default EKF2_MAG_TYPE 1       # Make sure magnetometer is fused even when not flying
+param set-default EKF2_GBIAS_INIT 0.01
+param set-default EKF2_ANGERR_INIT 0.01
+
+# Rate control parameters (required to pass sanity checks)
+param set-default BD_MOTOR_TRACK 0.5    # Distance between left and right motors (meters)
+param set-default RO_MAX_THR_SPEED 2.0  # Speed at full throttle (m/s)
+param set-default RO_YAW_RATE_P 1.0     # Yaw rate P gain
+
+# Temporary.
+param set-default NAV_FW_ALT_RAD 1000

@@ -1,0 +1,5 @@
+menuconfig MODULES_BOAT_DIFFERENTIAL
+	bool "boat_differential"
+	default n
+	---help---
+		Enable support for differential boats

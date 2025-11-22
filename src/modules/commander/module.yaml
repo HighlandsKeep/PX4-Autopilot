@@ -15,6 +15,20 @@ parameters:
             volatile: true
             category: System
 
+        COM_BOOT_MODE:
+            description:
+                short: Default boot mode
+                long: |
+                    Navigation state the vehicle will enter when disarmed and powered on.
+                    Set to -1 to use the default behavior (Auto Loiter for most vehicles).
+                    Set to 16 for Safe mode (rovers/boats).
+            type: enum
+            values:
+                -1: Default (Auto Loiter)
+                0: Manual
+                16: Safe
+            default: -1
+
         COM_FLTMODE${i}:
             description:
                 short: Mode slot ${i}
@@ -39,6 +53,7 @@ parameters:
                 12: Follow Me
                 13: Precision Land
                 16: Altitude Cruise
+                17: Safe
                 100: External Mode 1
                 101: External Mode 2
                 102: External Mode 3
