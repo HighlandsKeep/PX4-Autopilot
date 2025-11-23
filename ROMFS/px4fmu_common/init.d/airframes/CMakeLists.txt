@@ -140,6 +140,20 @@ if(CONFIG_MODULES_VTOL_ATT_CONTROL)
 	)
 endif()
 
+if(CONFIG_MODULES_BOAT_DIFFERENTIAL)
+	px4_add_romfs_files(
+		# [30000, 30999] Differential boats
+		30000_expect_differential
+	)
+endif()
+
+if(CONFIG_MODULES_BOAT_VECTORTHRUST)
+	px4_add_romfs_files(
+		# [31000, 31999] Vector thrust boats
+		31000_warden_vectorthrust
+	)
+endif()
+
 if(CONFIG_MODULES_ROVER_DIFFERENTIAL)
 	px4_add_romfs_files(
 		# [50000, 50999] Differential rovers

@@ -1,0 +1,5 @@
+#!/bin/sh
+# Standard apps for a differential boat.
+
+# Start boat differential module.
+boat_differential start

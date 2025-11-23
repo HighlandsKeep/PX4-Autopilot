@@ -1,0 +1,5 @@
+menuconfig MODULES_BOAT_VECTORTHRUST
+	bool "boat_vectorthrust"
+	default n
+	---help---
+		Enable support for vector thrust boats

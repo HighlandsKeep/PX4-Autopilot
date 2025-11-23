@@ -144,6 +144,10 @@ void getModeRequirements(uint8_t vehicle_type, failsafe_flags_s &flags)
 	setRequirement(vehicle_status_s::NAVIGATION_STATE_ACRO, flags.mode_req_angular_velocity);
 	setRequirement(vehicle_status_s::NAVIGATION_STATE_ACRO, flags.mode_req_manual_control);
 
+	// NAVIGATION_STATE_SAFE - no requirements (can be entered without RC, position, etc.)
+	// This mode is only available for rovers/boats and holds all actuators at neutral
+	// No setRequirement calls - mode has no prerequisites
+
 	// NAVIGATION_STATE_DESCEND
 	setRequirement(vehicle_status_s::NAVIGATION_STATE_DESCEND, flags.mode_req_angular_velocity);
 	setRequirement(vehicle_status_s::NAVIGATION_STATE_DESCEND, flags.mode_req_attitude);

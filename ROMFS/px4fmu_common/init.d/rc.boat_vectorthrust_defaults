@@ -1,0 +1,28 @@
+#!/bin/sh
+#
+# USV with vector thrust steering
+#
+# NOTE: Script variables are declared/initialized/unset in the rcS script.
+#
+
+set VEHICLE_TYPE boat_vectorthrust
+
+# MAV_TYPE_SURFACE_BOAT 11
+param set-default MAV_TYPE 11
+
+#
+# Default parameters for vector thrust boats.
+#
+param set-default MIS_TAKEOFF_ALT 0.01
+param set-default NAV_ACC_RAD 2
+param set-default CA_AIRFRAME 17        # Boat (Vector Thrust)
+param set-default EKF2_MAG_TYPE 1       # Make sure magnetometer is fused even when not flying
+param set-default EKF2_GBIAS_INIT 0.01
+param set-default EKF2_ANGERR_INIT 0.01
+
+# Rate control parameters (required to pass sanity checks)
+param set-default RO_MAX_THR_SPEED 2.0  # Speed at full throttle (m/s)
+param set-default RO_YAW_RATE_P 1.0     # Yaw rate P gain
+
+# Temporary.
+param set-default NAV_FW_ALT_RAD 1000
