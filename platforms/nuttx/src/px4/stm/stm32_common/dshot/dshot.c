@@ -57,8 +57,8 @@
 
 // DShot protocol definitions
 #define ONE_MOTOR_DATA_SIZE         16u
-#define MOTOR_PWM_BIT_1             14u
-#define MOTOR_PWM_BIT_0             7u
+#define MOTOR_PWM_BIT_1             6u
+#define MOTOR_PWM_BIT_0             3u
 #define DSHOT_THROTTLE_POSITION     5u
 #define DSHOT_TELEMETRY_POSITION    4u
 #define NIBBLES_SIZE                4u

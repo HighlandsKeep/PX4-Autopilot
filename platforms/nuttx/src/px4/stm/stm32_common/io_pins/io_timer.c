@@ -601,6 +601,11 @@ int io_timer_set_dshot_burst_mode(uint8_t timer, unsigned dshot_pwm_freq, uint8_
 	}
 
 	if (OK == ret_val) {
+		// CRITICAL: Disable ARPE (Auto-Reload Preload Enable) to prevent shadow register issues
+		// With ARPE enabled, ARR/PSC writes go to shadow registers and can be corrupted
+		uint32_t cr1 = rCR1(timer);
+		rCR1(timer) = cr1 & ~ATIM_CR1_ARPE;
+
 		rARR(timer)  = DSHOT_MOTOR_PWM_BIT_WIDTH;
 		rPSC(timer)  = ((int)(io_timers[timer].clock_freq / dshot_pwm_freq) / DSHOT_MOTOR_PWM_BIT_WIDTH) - 1;
 		rEGR(timer)  = ATIM_EGR_UG;
@@ -1005,10 +1010,19 @@ int io_timer_set_enable(bool state, io_timer_channel_mode_t mode, io_timer_chann
 		break;
 
 	case IOTimerChanMode_Dshot:
-	case IOTimerChanMode_DshotInverted:
+		// CRITICAL: Must enable the channel output for DShot to work!
 		dier_bit = 0;
+		ccer_bit = state ? GTIM_CCER_CC1E : 0;
+		cr1_bit  = state ? GTIM_CR1_CEN : 0;
+		break;
 
-	/* fallthrough */
+	case IOTimerChanMode_DshotInverted:
+		// For inverted DShot: enable channel + set polarity bit
+		dier_bit = 0;
+		ccer_bit = state ? (GTIM_CCER_CC1E | GTIM_CCER_CC1P) : 0;
+		cr1_bit  = state ? GTIM_CR1_CEN : 0;
+		break;
+
 	case IOTimerChanMode_Capture:
 	case IOTimerChanMode_CaptureDMA:
 		cr1_bit  = state ? GTIM_CR1_CEN : 0;
