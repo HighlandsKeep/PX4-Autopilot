@@ -50,28 +50,30 @@ __BEGIN_DECLS
 
 typedef enum {
   DShot_cmd_motor_stop = 0,
-  DShot_cmd_beacon1,
-  DShot_cmd_beacon2,
-  DShot_cmd_beacon3,
-  DShot_cmd_beacon4,
-  DShot_cmd_beacon5,
-  DShot_cmd_esc_info, // V2 includes settings
-  DShot_cmd_spin_direction_1,
-  DShot_cmd_spin_direction_2,
-  DShot_cmd_3d_mode_off,
-  DShot_cmd_3d_mode_on,
-  DShot_cmd_settings_request, // Currently not implemented
-  DShot_cmd_save_settings,
+  DShot_cmd_beacon1 = 1,
+  DShot_cmd_beacon2 = 2,
+  DShot_cmd_beacon3 = 3,
+  DShot_cmd_beacon4 = 4,
+  DShot_cmd_beacon5 = 5,
+  DShot_cmd_esc_info = 6, // V2 includes settings
+  DShot_cmd_spin_direction_1 = 7,
+  DShot_cmd_spin_direction_2 = 8,
+  DShot_cmd_3d_mode_off = 9,
+  DShot_cmd_3d_mode_on = 10,
+  DShot_cmd_settings_request = 11, // Currently not implemented
+  DShot_cmd_save_settings = 12,
+  DShot_cmd_extended_telemetry_enable = 13,
+  DShot_cmd_extended_telemetry_disable = 14,
   DShot_cmd_spin_direction_normal = 20,
   DShot_cmd_spin_direction_reversed = 21,
-  DShot_cmd_led0_on,                       // BLHeli32 only
-  DShot_cmd_led1_on,                       // BLHeli32 only
-  DShot_cmd_led2_on,                       // BLHeli32 only
-  DShot_cmd_led3_on,                       // BLHeli32 only
-  DShot_cmd_led0_off,                      // BLHeli32 only
-  DShot_cmd_led1_off,                      // BLHeli32 only
-  DShot_cmd_led2_off,                      // BLHeli32 only
-  DShot_cmd_led4_off,                      // BLHeli32 only
+  DShot_cmd_led0_on = 22,                  // BLHeli32 only
+  DShot_cmd_led1_on = 23,                  // BLHeli32 only
+  DShot_cmd_led2_on = 24,                  // BLHeli32 only
+  DShot_cmd_led3_on = 25,                  // BLHeli32 only
+  DShot_cmd_led0_off = 26,                 // BLHeli32 only
+  DShot_cmd_led1_off = 27,                 // BLHeli32 only
+  DShot_cmd_led2_off = 28,                 // BLHeli32 only
+  DShot_cmd_led3_off = 29,                 // BLHeli32 only
   DShot_cmd_audio_stream_mode_on_off = 30, // KISS audio Stream mode on/off
   DShot_cmd_silent_mode_on_off = 31,       // KISS silent Mode on/off
   DShot_cmd_signal_line_telemetry_disable = 32,

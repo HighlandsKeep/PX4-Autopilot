@@ -143,7 +143,7 @@ private:
 
   MixingOutput _mixing_output{
       PARAM_PREFIX, DIRECT_PWM_OUTPUT_CHANNELS,
-      *this,        MixingOutput::SchedulingPolicy::Auto,
+      *this,        MixingOutput::SchedulingPolicy::Disabled,
       false,        false};
   uint32_t _reversible_outputs{};
 

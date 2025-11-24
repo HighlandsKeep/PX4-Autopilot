@@ -68,7 +68,11 @@ int DShot::init() {
   // Getting initial parameter values
   update_params();
 
-  ScheduleNow();
+  // Schedule at 1 kHz (1000 us interval) for consistent DShot output rate
+  // This matches typical multicopter controller rates (PX4 rate_ctrl via IMU
+  // callback) Per DShot spec, frame generation should run at PID loop rate or
+  // higher.
+  ScheduleOnInterval(1000);
 
   return OK;
 }
