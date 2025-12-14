@@ -493,9 +493,10 @@ void dma_burst_finished_callback(DMA_HANDLE handle, uint8_t status, void *arg)
 	// Enable CaptureDMA and on all configured channels
 	io_timer_set_enable(true, IOTimerChanMode_CaptureDMA, IO_TIMER_ALL_MODES_CHANNELS);
 
-	// 30us to switch regardless of DShot frequency + eRPM frame time + 10us for good measure
-	hrt_abstime frame_us = (16 * 1000000) / _dshot_frequency; // 16 bits * us_per_s / bits_per_s
-	hrt_abstime delay = 30 + frame_us + 10;
+	// 30us to switch regardless of DShot frequency + DShot pulse send time + 10us for good measure
+	// Use CHANNEL_OUTPUT_BUFF_SIZE - this is the actual DMA buffer length including pre-bits
+	hrt_abstime pulse_send_us = (CHANNEL_OUTPUT_BUFF_SIZE * 1000000) / _dshot_frequency;
+	hrt_abstime delay = 30 + pulse_send_us + 10;
 	hrt_call_after(&_cc_call, delay, capture_complete_callback, arg);
 }
 
@@ -750,6 +751,10 @@ uint8_t nibbles_from_mapped(uint8_t mapped)
 
 unsigned calculate_period(uint8_t timer_index, uint8_t channel_index)
 {
+	if (channel_index >= MAX_NUM_CHANNELS_PER_TIMER) {
+		return 0;
+	}
+
 	uint32_t value = 0;
 	uint32_t high = 1; // We start off with high
 	unsigned shifted = 0;
