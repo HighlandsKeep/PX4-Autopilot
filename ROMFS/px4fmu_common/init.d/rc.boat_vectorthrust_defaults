@@ -14,6 +14,8 @@ param set-default MAV_TYPE 11
 # Default parameters for vector thrust boats.
 #
 param set-default MIS_TAKEOFF_ALT 0.01
+param set-default COM_DISARM_PRFLT -1
+param set-default COM_DISARM_LAND -1
 param set-default NAV_ACC_RAD 2
 param set-default CA_AIRFRAME 17        # Boat (Vector Thrust)
 param set-default EKF2_MAG_TYPE 1       # Make sure magnetometer is fused even when not flying
