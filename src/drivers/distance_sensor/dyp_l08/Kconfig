@@ -1,0 +1,5 @@
+menuconfig DRIVERS_DISTANCE_SENSOR_DYP_L08
+	bool "dyp_l08"
+	default n
+	---help---
+		Enable support for DYP-L08 ultrasonic underwater rangefinder
