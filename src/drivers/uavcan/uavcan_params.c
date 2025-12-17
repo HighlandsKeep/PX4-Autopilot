@@ -460,3 +460,31 @@ PARAM_DEFINE_INT32(UAVCAN_SUB_BTN, 0);
  * @group UAVCAN
  */
 PARAM_DEFINE_INT32(UAVCAN_SUB_RCIN, 0);
+
+/**
+ * UAVCAN ESC 3D deadband high
+ *
+ * When the actuator_output is between UAVCAN_3D_DEAD_L and UAVCAN_3D_DEAD_H,
+ * the ESC will not spin. This deadband allows for RC controller calibration
+ * tolerance around the mid-position when using 3D (bidirectional) ESCs.
+ * This value is with respect to the mixer_module range (0-1999), not the ESC command values.
+ *
+ * @min 1000
+ * @max 1999
+ * @group UAVCAN
+ */
+PARAM_DEFINE_INT32(UAVCAN_3D_DEAD_H, 1000);
+
+/**
+ * UAVCAN ESC 3D deadband low
+ *
+ * When the actuator_output is between UAVCAN_3D_DEAD_L and UAVCAN_3D_DEAD_H,
+ * the ESC will not spin. This deadband allows for RC controller calibration
+ * tolerance around the mid-position when using 3D (bidirectional) ESCs.
+ * This value is with respect to the mixer_module range (0-1999), not the ESC command values.
+ *
+ * @min 0
+ * @max 1000
+ * @group UAVCAN
+ */
+PARAM_DEFINE_INT32(UAVCAN_3D_DEAD_L, 1000);

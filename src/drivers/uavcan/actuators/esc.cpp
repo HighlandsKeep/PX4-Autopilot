@@ -81,6 +81,10 @@ UavcanEscController::init()
 		_param_handles[i] = param_find(param_name);
 	}
 
+	// Initialize 3D deadband parameters
+	_param_3d_dead_h = param_find("UAVCAN_3D_DEAD_H");
+	_param_3d_dead_l = param_find("UAVCAN_3D_DEAD_L");
+
 	_initialized = true;
 
 	return res;
@@ -98,11 +102,32 @@ UavcanEscController::update_outputs(uint16_t outputs[MAX_ACTUATORS], unsigned to
 
 	_prev_cmd_pub = timestamp;
 
+	// Get 3D deadband parameters
+	int32_t deadband_high = 1000;
+	int32_t deadband_low = 1000;
+
+	if (_param_3d_dead_h != PARAM_INVALID) {
+		param_get(_param_3d_dead_h, &deadband_high);
+	}
+
+	if (_param_3d_dead_l != PARAM_INVALID) {
+		param_get(_param_3d_dead_l, &deadband_low);
+	}
+
 	uavcan::equipment::esc::RawCommand msg = {};
 
-	// directly output values from mixer
+	// Apply 3D deadband and directly output values from mixer
 	for (unsigned i = 0; i < total_outputs; i++) {
-		msg.cmd.push_back(static_cast<int>(outputs[i]));
+		int output = static_cast<int>(outputs[i]);
+
+		// Apply 3D deadband if output is within the deadband range
+		// This handles imperfect RC controller calibration around mid-position
+		if (output >= deadband_low && output < deadband_high) {
+			// Set to mid-position (1000) when in deadband
+			output = 1000;
+		}
+
+		msg.cmd.push_back(output);
 	}
 
 	// but only output as many channels as are configured

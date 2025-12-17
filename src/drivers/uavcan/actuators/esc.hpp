@@ -117,4 +117,6 @@ private:
 
 
 	param_t _param_handles[MAX_ACTUATORS] {PARAM_INVALID};
+	param_t _param_3d_dead_h{PARAM_INVALID};
+	param_t _param_3d_dead_l{PARAM_INVALID};
 };
