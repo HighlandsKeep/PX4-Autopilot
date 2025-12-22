@@ -1,0 +1,22 @@
+#!/bin/sh
+#
+# Matek CAN-G474 DShot ESC Node board defaults
+# Matching ArduPilot MatekG474-DShot configuration
+#------------------------------------------------------------------------------
+
+# Start PWM output driver for DShot ESC control
+pwm_out start
+
+# Start DShot driver
+dshot start
+
+# Set default parameters for DShot 600 ESC operation
+param set-default DSHOT_CONFIG 600
+param set-default MOT_SLEW_MAX 0
+
+# Enable all 11 DShot outputs
+param set-default DSHOT_MIN 0
+
+# DroneCAN configuration
+param set-default UAVCAN_ENABLE 3
+param set-default UAVCAN_ESC_IDLT 1

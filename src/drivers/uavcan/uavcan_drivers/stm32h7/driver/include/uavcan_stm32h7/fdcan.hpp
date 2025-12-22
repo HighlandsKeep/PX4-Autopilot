@@ -25,6 +25,9 @@ namespace fdcan
 {
 #if defined(CONFIG_STM32H7_STM32H7X3XX) || defined(CONFIG_STM32H7_STM32H7X7XX)
 #include "fdcan_h7x3xx.h"
+#elif defined(CONFIG_ARCH_CHIP_STM32G474R)
+/* STM32G4 uses same FDCAN peripheral as H7 */
+#include "fdcan_h7x3xx.h"
 #else
 # error "Unsupported STM32H7 MCU"
 #endif

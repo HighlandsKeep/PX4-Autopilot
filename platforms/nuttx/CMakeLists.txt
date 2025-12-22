@@ -382,7 +382,15 @@ else()
 		target_link_libraries(px4 PRIVATE -Wl,--print-memory-usage)
 	endif()
 
-	target_link_libraries(px4 PRIVATE ${module_libraries})
+	target_link_libraries(px4 PRIVATE
+		-Wl,--start-group
+		${module_libraries}
+		drivers_board  # Add to resolve circular dependencies
+		arch_board_reset  # Add to resolve up_systemreset dependency
+		nuttx_arch  # Add again to resolve circular dependencies
+		px4_layer  # Add again to resolve px4_platform_init
+		-Wl,--end-group
+	)
 
 	if(config_romfs_root)
 		add_subdirectory(${PX4_SOURCE_DIR}/ROMFS ${PX4_BINARY_DIR}/ROMFS)

@@ -1,0 +1,13 @@
+{
+    "board_id": 1170,
+    "magic": "MATEKCANGx",
+    "description": "Firmware for the Matek CAN-G474 DroneCAN ESC Node",
+    "image": "",
+    "build_time": 0,
+    "summary": "MATEKCAN-G474",
+    "version": "0.1",
+    "image_size": 0,
+    "image_maxsize": 491520,
+    "git_identity": "",
+    "board_revision": 0
+}

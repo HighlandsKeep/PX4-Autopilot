@@ -1,0 +1,106 @@
+/****************************************************************************
+ * boards/matek/can-g474/scripts/ld.script
+ *
+ * STM32G474RE linker script
+ *
+ ****************************************************************************/
+
+/* The STM32G474RE has 512 KiB of FLASH beginning at address 0x0800:0000
+ * and 128 KiB of SRAM.
+ * When booting from FLASH, FLASH memory is aliased to address 0x0000:0000
+ * where the code expects to begin execution by jumping to the entry point in
+ * the 0x0800:0000 address range.
+ *
+ * The first 36KB is reserved for the bootloader (32KB bootloader + 4KB storage)
+ * matching ArduPilot configuration
+ */
+
+MEMORY
+{
+        flash (rx)   : ORIGIN = 0x08000000, LENGTH = 512K
+        sram  (rwx)  : ORIGIN = 0x20000000, LENGTH = 128K
+}
+
+OUTPUT_ARCH(arm)
+ENTRY(__start)		/* Treat __start as the anchor for dead code stripping */
+EXTERN(_vectors)	/* Force the vectors to be included in the output */
+
+SECTIONS
+{
+	.text : {
+		_stext = ABSOLUTE(.);
+		*(.vectors)
+		. = ALIGN(8);
+		/*
+		 * This section positions the app_descriptor_t used
+		 * by the make_can_boot_descriptor.py tool to set
+		 * the application image's descriptor so that the
+		 * uavcan bootloader has the ability to validate the
+		 * image crc, size etc
+		 */
+		KEEP(*(.app_descriptor))
+		*(.text .text.*)
+		*(.fixup)
+		*(.gnu.warning)
+		*(.rodata .rodata.*)
+		*(.gnu.linkonce.t.*)
+		*(.glue_7)
+		*(.glue_7t)
+		*(.got)
+		*(.gcc_except_table)
+		*(.gnu.linkonce.r.*)
+		_etext = ABSOLUTE(.);
+
+	} > flash
+
+	/*
+	 * Init functions (static constructors and the like)
+	 */
+	.init_section : {
+		_sinit = ABSOLUTE(.);
+		KEEP(*(.init_array .init_array.*))
+		_einit = ABSOLUTE(.);
+	} > flash
+
+	.ARM.extab : {
+		*(.ARM.extab*)
+	} > flash
+
+	__exidx_start = ABSOLUTE(.);
+	.ARM.exidx : {
+		*(.ARM.exidx*)
+	} > flash
+	__exidx_end = ABSOLUTE(.);
+
+	_eronly = ABSOLUTE(.);
+
+	.data : {
+		_sdata = ABSOLUTE(.);
+		*(.data .data.*)
+		*(.gnu.linkonce.d.*)
+		CONSTRUCTORS
+		_edata = ABSOLUTE(.);
+	} > sram AT > flash
+
+	.bss : {
+		_sbss = ABSOLUTE(.);
+		*(.bss .bss.*)
+		*(.gnu.linkonce.b.*)
+		*(COMMON)
+		_ebss = ABSOLUTE(.);
+	} > sram
+
+	/* Stabs debugging sections. */
+	.stab 0 : { *(.stab) }
+	.stabstr 0 : { *(.stabstr) }
+	.stab.excl 0 : { *(.stab.excl) }
+	.stab.exclstr 0 : { *(.stab.exclstr) }
+	.stab.index 0 : { *(.stab.index) }
+	.stab.indexstr 0 : { *(.stab.indexstr) }
+	.comment 0 : { *(.comment) }
+	.debug_abbrev 0 : { *(.debug_abbrev) }
+	.debug_info 0 : { *(.debug_info) }
+	.debug_line 0 : { *(.debug_line) }
+	.debug_pubnames 0 : { *(.debug_pubnames) }
+	.debug_aranges 0 : { *(.debug_aranges) }
+}

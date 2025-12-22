@@ -114,5 +114,8 @@ param set-default SENS_MAG_RATE 100
 
 sensors start
 
+# Start LED heartbeat for boards without serial console
+heartbeat start
+
 uavcannode start
 unset R
