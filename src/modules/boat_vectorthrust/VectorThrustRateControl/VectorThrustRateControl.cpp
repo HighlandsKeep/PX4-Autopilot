@@ -152,28 +152,28 @@ bool VectorThrustRateControl::runSanityChecks()
 
 	if (_param_ro_max_thr_speed.get() < FLT_EPSILON) {
 		ret = false;
-		events::send<float>(events::ID("ackermann_rate_control_conf_invalid_max_thr_speed"), events::Log::Error,
+		events::send<float>(events::ID("vectorthrust_rate_control_conf_invalid_max_thr_speed"), events::Log::Error,
 				    "Invalid configuration of necessary parameter RO_MAX_THR_SPEED", _param_ro_max_thr_speed.get());
 
 	}
 
 	if (_param_bv_thrust_offset.get() < FLT_EPSILON) {
 		ret = false;
-		events::send<float>(events::ID("ackermann_rate_control_conf_invalid_wheel_base"), events::Log::Error,
+		events::send<float>(events::ID("vectorthrust_rate_control_conf_invalid_thrust_offset"), events::Log::Error,
 				    "Invalid configuration of necessary parameter BV_THRUST_OFFSET", _param_bv_thrust_offset.get());
 
 	}
 
 	if (_param_bv_max_thr_ang.get() < FLT_EPSILON) {
 		ret = false;
-		events::send<float>(events::ID("ackermann_rate_control_conf_invalid_max_str_ang"), events::Log::Error,
+		events::send<float>(events::ID("vectorthrust_rate_control_conf_invalid_max_thr_ang"), events::Log::Error,
 				    "Invalid configuration of necessary parameter BV_MAX_THR_ANG", _param_bv_max_thr_ang.get());
 
 	}
 
 	if (_param_ro_yaw_rate_limit.get() < FLT_EPSILON) {
 		ret = false;
-		events::send<float>(events::ID("ackermann_rate_control_conf_invalid_yaw_rate_lim"), events::Log::Error,
+		events::send<float>(events::ID("vectorthrust_rate_control_conf_invalid_yaw_rate_lim"), events::Log::Error,
 				    "Invalid configuration of necessary parameter RO_YAW_RATE_LIM", _param_ro_yaw_rate_limit.get());
 
 	}

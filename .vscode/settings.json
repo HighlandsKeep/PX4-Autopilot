@@ -139,5 +139,6 @@
         "editor.formatOnSave": true,
         "[cpp]": {
                 "editor.defaultFormatter": "xaver.clang-format"
-        }
+        },
+        "github.copilot.chat.codeGeneration.useInstructionFiles": true
 }

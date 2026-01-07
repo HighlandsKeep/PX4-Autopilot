@@ -107,7 +107,7 @@ bool BoatAttControl::runSanityChecks()
 
 	if (_param_ro_yaw_p.get() < FLT_EPSILON) {
 		ret = false;
-		events::send<float>(events::ID("differential_att_control_conf_invalid_yaw_p"), events::Log::Error,
+		events::send<float>(events::ID("boat_differential_att_control_conf_invalid_yaw_p"), events::Log::Error,
 				    "Invalid configuration of necessary parameter RO_YAW_P", _param_ro_yaw_p.get());
 	}
 

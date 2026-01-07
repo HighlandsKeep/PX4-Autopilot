@@ -13,7 +13,7 @@ parameters:
         max: 100
         increment: 0.001
         decimal: 3
-        default: 0
+        default: 0.5
 
       BV_MAX_THR_ANG:
         description:
@@ -24,7 +24,7 @@ parameters:
         max: 1.5708
         increment: 0.01
         decimal: 2
-        default: 0
+        default: 0.524
 
       BV_THR_RATE_LIM:
         description:

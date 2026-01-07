@@ -13,9 +13,9 @@ param set-default MAV_TYPE 11
 #
 # Default parameters for USVs.
 #
-param set-default MIS_TAKEOFF_ALT 0.01
 param set-default COM_DISARM_PRFLT -1
 param set-default COM_DISARM_LAND -1
+param set-default COM_BOOT_MODE 16      # Safe mode
 param set-default NAV_ACC_RAD 2
 param set-default CA_AIRFRAME 16        # Boat (Differential)
 param set-default CA_R_REV 3            # Right and left motors reversible
@@ -27,6 +27,3 @@ param set-default EKF2_ANGERR_INIT 0.01
 param set-default BD_MOTOR_TRACK 0.5    # Distance between left and right motors (meters)
 param set-default RO_MAX_THR_SPEED 2.0  # Speed at full throttle (m/s)
 param set-default RO_YAW_RATE_P 1.0     # Yaw rate P gain
-
-# Temporary.
-param set-default NAV_FW_ALT_RAD 1000

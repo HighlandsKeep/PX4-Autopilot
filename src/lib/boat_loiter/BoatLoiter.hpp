@@ -10,10 +10,12 @@
 #pragma once
 
 #include <lib/pure_pursuit/PurePursuit.hpp>
+#include <lib/geo/geo.h>
 #include <matrix/matrix/math.hpp>
 #include <px4_platform_common/module_params.h>
 #include <uORB/Publication.hpp>
 #include <uORB/Subscription.hpp>
+#include <uORB/topics/position_setpoint_triplet.h>
 #include <uORB/topics/rover_position_setpoint.h>
 #include <uORB/topics/vehicle_local_position.h>
 
@@ -80,11 +82,14 @@ protected:
 
   uORB::Subscription _vehicle_local_position_sub{
       ORB_ID(vehicle_local_position)};
+  uORB::Subscription _position_setpoint_triplet_sub{
+      ORB_ID(position_setpoint_triplet)};
   uORB::Publication<rover_position_setpoint_s> _rover_position_setpoint_pub{
       ORB_ID(rover_position_setpoint)};
 
   matrix::Vector2f _loiter_center_ned{NAN, NAN}; ///< Loiter center in NED frame
   bool _loiter_initialized{false}; ///< True when loiter center is set
+  bool _loiter_entry_printed{false}; ///< True when entry message has been printed
 
   DEFINE_PARAMETERS(
       (ParamFloat<px4::params::LOIT_RADIUS>)_param_loit_radius,

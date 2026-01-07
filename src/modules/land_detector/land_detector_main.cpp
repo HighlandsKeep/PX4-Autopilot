@@ -78,6 +78,10 @@ int LandDetector::task_spawn(int argc, char *argv[])
 	} else if (strcmp(argv[1], "rover") == 0) {
 		obj = new RoverLandDetector();
 
+	// Boats use rover land detector
+	} else if (strcmp(argv[1], "boat") == 0) {
+		obj = new RoverLandDetector();
+
 	} else if (strcmp(argv[1], "airship") == 0) {
 		obj = new AirshipLandDetector();
 

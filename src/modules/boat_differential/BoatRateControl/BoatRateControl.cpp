@@ -107,7 +107,7 @@ bool BoatRateControl::runSanityChecks()
 	if ((_param_bd_motor_track.get() < FLT_EPSILON || _param_ro_max_thr_speed.get() < FLT_EPSILON)
 	    && _param_ro_yaw_rate_p.get() < FLT_EPSILON) {
 		ret = false;
-		events::send<float, float, float>(events::ID("differential_rate_control_conf_invalid_rate_control"), events::Log::Error,
+		events::send<float, float, float>(events::ID("boat_differential_rate_control_conf_invalid_rate_control"), events::Log::Error,
 						  "Invalid configuration for rate control: Neither feed forward nor feedback is setup", _param_bd_motor_track.get(),
 						  _param_ro_max_thr_speed.get(), _param_ro_yaw_rate_p.get());
 	}

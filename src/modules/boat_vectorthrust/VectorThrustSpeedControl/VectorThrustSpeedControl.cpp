@@ -124,7 +124,7 @@ bool VectorThrustSpeedControl::runSanityChecks()
 
 	if (_param_ro_speed_limit.get() < FLT_EPSILON) {
 		ret = false;
-		events::send<float>(events::ID("ackermann_speed_control_conf_invalid_speed_lim"), events::Log::Error,
+		events::send<float>(events::ID("vectorthrust_speed_control_conf_invalid_speed_lim"), events::Log::Error,
 				    "Invalid configuration of necessary parameter RO_SPEED_LIM", _param_ro_speed_limit.get());
 
 	}

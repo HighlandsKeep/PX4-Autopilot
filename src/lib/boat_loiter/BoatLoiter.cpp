@@ -23,14 +23,57 @@ void BoatLoiter::loiterControl() {
   vehicle_local_position_s vehicle_local_position{};
 
   if (_vehicle_local_position_sub.copy(&vehicle_local_position)) {
-    // Initialize loiter center on first call
-    if (!_loiter_initialized || !PX4_ISFINITE(_loiter_center_ned(0))) {
-      // Calculate optimal stopping location based on current velocity
+    // Always check for position setpoint updates
+    position_setpoint_triplet_s position_setpoint_triplet{};
+    bool setpoint_valid = false;
+
+    if (_position_setpoint_triplet_sub.copy(&position_setpoint_triplet)) {
+      // If we have a valid current setpoint, use it as the loiter center
+      if (position_setpoint_triplet.current.valid &&
+          PX4_ISFINITE(position_setpoint_triplet.current.lat) &&
+          PX4_ISFINITE(position_setpoint_triplet.current.lon)) {
+
+        // Convert setpoint to local NED coordinates
+        MapProjection global_ned_proj_ref{};
+        if (!global_ned_proj_ref.isInitialized() ||
+            (global_ned_proj_ref.getProjectionReferenceTimestamp() !=
+             vehicle_local_position.ref_timestamp)) {
+          global_ned_proj_ref.initReference(vehicle_local_position.ref_lat,
+                                           vehicle_local_position.ref_lon,
+                                           vehicle_local_position.ref_timestamp);
+        }
+
+        Vector2f target_ned;
+        global_ned_proj_ref.project(position_setpoint_triplet.current.lat,
+                                   position_setpoint_triplet.current.lon,
+                                   target_ned(0), target_ned(1));
+
+        // Check if loiter center changed significantly (new target)
+        const bool center_changed = !PX4_ISFINITE(_loiter_center_ned(0)) ||
+                                    (target_ned - _loiter_center_ned).norm() > 1.0f;
+
+        // Update loiter center to the setpoint position
+        _loiter_center_ned = target_ned;
+        setpoint_valid = true;
+        _loiter_initialized = true;
+
+        // Print entry message when entering loiter with new target
+        if (center_changed) {
+          PX4_INFO("Boat entering LOITER mode");
+          _loiter_entry_printed = true;
+        }
+      }
+    }
+
+    // Initialize loiter center on first call if no valid setpoint
+    if (!setpoint_valid && (!_loiter_initialized || !PX4_ISFINITE(_loiter_center_ned(0)))) {
+      PX4_INFO("Boat entering LOITER mode");
       Vector2f current_pos(vehicle_local_position.x, vehicle_local_position.y);
       Vector2f current_vel(vehicle_local_position.vx,
                            vehicle_local_position.vy);
       _loiter_center_ned = calculateStoppingLocation(current_pos, current_vel);
       _loiter_initialized = true;
+      _loiter_entry_printed = true;
     }
 
     const float loiter_radius = math::max(_param_loit_radius.get(), 0.1f);

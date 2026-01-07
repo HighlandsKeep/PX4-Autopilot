@@ -142,13 +142,13 @@ bool BoatSpeedControl::runSanityChecks()
 
 	if (_param_ro_speed_limit.get() < FLT_EPSILON) {
 		ret = false;
-		events::send<float>(events::ID("differential_speed_control_conf_invalid_speed_lim"), events::Log::Error,
+		events::send<float>(events::ID("boat_differential_speed_control_conf_invalid_speed_lim"), events::Log::Error,
 				    "Invalid configuration of necessary parameter RO_SPEED_LIM", _param_ro_speed_limit.get());
 	}
 
 	if (_param_ro_max_thr_speed.get() < FLT_EPSILON && _param_ro_speed_p.get() < FLT_EPSILON) {
 		ret = false;
-		events::send<float, float>(events::ID("differential_speed_control_conf_invalid_speed_control"), events::Log::Error,
+		events::send<float, float>(events::ID("boat_differential_speed_control_conf_invalid_speed_control"), events::Log::Error,
 					   "Invalid configuration for speed control: Neither feed forward (RO_MAX_THR_SPEED) nor feedback (RO_SPEED_P) is setup",
 					   _param_ro_max_thr_speed.get(), _param_ro_speed_p.get());
 	}

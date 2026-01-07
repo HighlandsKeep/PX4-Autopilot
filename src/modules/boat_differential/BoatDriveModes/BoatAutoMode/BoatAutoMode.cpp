@@ -89,11 +89,8 @@ void BoatAutoMode::autoControl() {
     rover_position_setpoint.start_ned[0] = prev_wp_ned(0);
     rover_position_setpoint.start_ned[1] = prev_wp_ned(1);
 
-    // At mission end (no next waypoint), use loiter algorithm
-    const bool mission_end = !PX4_ISFINITE(waypoint_transition_angle);
-
-    if (mission_end) {
-      // Use full loiter algorithm for mission end behavior
+    // At mission end (no next waypoint), use loiter behavior
+    if (!PX4_ISFINITE(waypoint_transition_angle)) {
       _loiter_mode.loiterControl();
     } else {
       rover_position_setpoint.arrival_speed = arrivalSpeed(
