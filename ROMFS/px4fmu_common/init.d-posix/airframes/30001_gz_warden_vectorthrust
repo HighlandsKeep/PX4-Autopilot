@@ -1,0 +1,71 @@
+#!/bin/sh
+# @name Warden Vector Thrust (Gazebo)
+# @type Boat
+# @class Boat
+
+. ${R}etc/init.d/rc.boat_vectorthrust_defaults
+
+PX4_SIMULATOR=${PX4_SIMULATOR:=gz}
+PX4_GZ_WORLD=${PX4_GZ_WORLD:=boat_world}
+PX4_SIM_MODEL=${PX4_SIM_MODEL:=warden_vectorthrust}
+
+param set-default SIM_GZ_EN 1 # Gazebo bridge
+
+param set-default COM_RC_IN_MODE 1 # Joystick/No RC checks for simulation
+
+param set-default FD_ESCS_EN 0 # Disable ESC failure detection for SITL
+
+param set-default NAV_ACC_RAD 0.5
+
+# Rate Control Parameters
+param set-default RO_YAW_RATE_I 0.01
+param set-default RO_YAW_RATE_P 0.25
+param set-default RO_YAW_RATE_LIM 250
+param set-default RO_YAW_ACCEL_LIM 400
+param set-default RO_YAW_DECEL_LIM 800
+param set-default RO_YAW_RATE_CORR 1
+param set-default RO_YAW_EXPO 0.85
+param set-default RO_YAW_SUPEXPO 0.3
+
+# Attitude Control Parameters
+param set-default RO_YAW_P 5
+
+# Velocity Control Parameters
+param set-default RO_ACCEL_LIM 4
+param set-default RO_DECEL_LIM 6
+param set-default RO_JERK_LIM 10
+param set-default RO_MAX_THR_SPEED 2
+param set-default RO_SPEED_LIM 1.8
+param set-default RO_SPEED_I 0.01
+param set-default RO_SPEED_P 0.01
+param set-default RO_SPEED_RED 1
+
+# Pure Pursuit parameters
+param set-default PP_LOOKAHD_GAIN 1
+param set-default PP_LOOKAHD_MAX 10
+param set-default PP_LOOKAHD_MIN 1
+
+# Loiter parameters for boat drift behavior
+param set-default LOIT_RADIUS 5.0
+param set-default LOIT_SPEED_GAIN 0.5
+param set-default LOIT_TYPE 0
+
+# Actuator mapping - Single vectored thruster
+# Servo for thruster steering
+param set-default SIM_GZ_SV_FUNC1 201 # Servo1 -> thruster angle (actuator_servos.control[0])
+param set-default SIM_GZ_SV_MIN1 0
+param set-default SIM_GZ_SV_MAX1 1000
+param set-default SIM_GZ_SV_DIS1 500
+param set-default SIM_GZ_SV_MINA1 -30
+param set-default SIM_GZ_SV_MAXA1 30
+
+# Servo for thruster motor (Thruster plugin requires double format from servo)
+param set-default SIM_GZ_SV_FUNC2 101 # Motor1 -> thruster forward (actuator_motors.control[0])
+param set-default SIM_GZ_SV_MIN2 0
+param set-default SIM_GZ_SV_MAX2 1000
+param set-default SIM_GZ_SV_DIS2 0
+
+# ESC for QGC monitoring (same motor command, just for display)
+param set-default SIM_GZ_EC_FUNC1 101 # Motor1 -> display in QGC
+param set-default SIM_GZ_EC_MIN1 0
+param set-default SIM_GZ_EC_MAX1 1000

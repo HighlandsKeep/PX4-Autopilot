@@ -103,3 +103,6 @@
 [submodule "src/drivers/ins/sbgecom/sbgECom"]
 	path = src/drivers/ins/sbgecom/sbgECom
 	url = https://github.com/PX4/sbgECom.git
+[submodule "Tools/simulation/gz_waves"]
+	path = Tools/simulation/gz_waves
+	url = https://github.com/srmainwaring/asv_wave_sim.git
